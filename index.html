@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>App de Treino - Ciclo ABC</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-app: #f4f7f9; /* Fundo cinza/azulado bem claro */
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --blue-primary: #2563eb;
+      --blue-light: #eff6ff;
+      --blue-gradient: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+      --accent: #38bdf8;
+      --border-line: #e2e8f0;
+      
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.03);
+      --shadow-hover: 0 12px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif; /* Aplicando a nova fonte */
+      background-color: var(--bg-app);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding-bottom: 90px;
+    }
+
+    .app-container {
+      /* Largura fluida para aproveitar a tela toda no desktop */
+      max-width: 1400px; 
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    /* Cabeçalho (Hero) */
+    .header {
+      background: var(--blue-gradient);
+      color: white;
+      border-radius: var(--radius-lg);
+      padding: 40px 32px;
+      margin-bottom: 30px;
+      box-shadow: 0 15px 30px -5px rgba(37, 99, 235, 0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::after {
+      content: '';
+      position: absolute;
+      top: -30%; right: -10%;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .badge-top {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(8px);
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .header h1 {
+      font-size: clamp(28px, 4vw, 42px); /* Tamanho responsivo */
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .header p {
+      color: #e0f2fe;
+      font-size: clamp(14px, 2vw, 16px);
+      line-height: 1.6;
+      max-width: 800px;
+    }
+
+    .stats-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .stat-pill {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(5px);
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      min-width: max-content;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .stat-pill span {
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      opacity: 0.85;
+      margin-bottom: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-pill strong {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    /* Sistema de Filtros Modernizado */
+    .filter-scroll {
+      position: sticky;
+      top: 0;
+      background: var(--bg-app);
+      padding: 16px 0 24px 0;
+      z-index: 10;
+    }
+
+    .filters {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 8px; /* Espaço para a sombra do hover */
+    }
+    
+    .filters::-webkit-scrollbar { display: none; }
+
+    .filter-btn {
+      background: var(--card-bg);
+      border: none;
+      color: var(--text-muted);
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
+
+    .filter-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 15px -3px rgba(0,0,0,0.08);
+      color: var(--blue-primary);
+    }
+
+    .filter-btn.active {
+      background: var(--blue-gradient);
+      color: white;
+      box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
+    }
+    
+    .filter-btn.active:hover {
+      color: white;
+    }
+
+    /* Grid de Treinos Responsivo (Tela Cheia) */
+    .workouts-grid {
+      display: grid;
+      /* Faz os cards se adaptarem. No celular 1 coluna, no PC várias colunas */
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+    }
+
+    .workout-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: fadeIn 0.4s ease forwards;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .workout-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .workout-card.hidden {
+      display: none;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .workout-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border-line);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      background: #fafaf9;
+    }
+
+    .workout-title h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .workout-title p {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .workout-tag {
+      background: var(--blue-light);
+      color: var(--blue-primary);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .workout-body {
+      padding: 20px;
+      flex-grow: 1;
+    }
+
+    .exercise-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .exercise-item {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 16px;
+      background: var(--bg-app);
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    .exercise-item:hover {
+      background: var(--blue-light);
+    }
+
+    .ex-name {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .ex-sets {
+      background: var(--card-bg);
+      border: 1px solid var(--border-line);
+      padding: 4px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .ex-reps {
+      font-weight: 800;
+      color: var(--blue-primary);
+      text-align: right;
+      min-width: 55px;
+    }
+
+    /* Botão Flutuante Piscante (FAB) Modernizado */
+    .fab-button {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--blue-gradient);
+      color: white;
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+      cursor: pointer;
+      z-index: 100;
+      border: none;
+      animation: pulse 2s infinite cubic-bezier(0.66, 0, 0, 1);
+      transition: transform 0.2s;
+    }
+
+    .fab-button:hover {
+      transform: scale(1.05);
+    }
+
+    .fab-button:active {
+      transform: scale(0.95);
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.6);
+      }
+      70% {
+        box-shadow: 0 0 0 25px rgba(37, 99, 235, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+      }
+    }
+
+    .play-icon {
+      width: 0;
+      height: 0;
+      border-top: 12px solid transparent;
+      border-bottom: 12px solid transparent;
+      border-left: 18px solid white;
+      margin-left: 6px; 
+    }
+
+    /* Ajustes para telas menores */
+    @media (max-width: 768px) {
+      .app-container {
+        padding: 16px;
+      }
+      .header {
+        padding: 30px 20px;
+        border-radius: 20px;
+      }
+      .fab-button {
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <header class="header">
+      <div class="badge-top">Treino ABC+Descanso</div>
+      <h1>Ciclo ABC <br/>Estética & Volume</h1>
+      <p>Treino focado em reduzir gordura sem perder massa magra - tempo total de treino 1h30.</p>
+      
+      <div class="stats-row">
+        <div class="stat-pill">
+          <span>Foco Principal</span>
+          <strong>Hipertrofia</strong>
+        </div>
+        <div class="stat-pill">
+          <span>Duração/Dia</span>
+          <strong>60-90 min</strong>
+        </div>
+      </div>
+    </header>
+
+    <div class="filter-scroll">
+      <div class="filters">
+        <button class="filter-btn active" onclick="filterWorkouts('all', this)">Todos os Treinos</button>
+        <button class="filter-btn" onclick="filterWorkouts('A', this)">Treino A (Costas)</button>
+        <button class="filter-btn" onclick="filterWorkouts('B', this)">Treino B (Peito)</button>
+        <button class="filter-btn" onclick="filterWorkouts('C', this)">Treino C (Perna)</button>
+      </div>
+    </div>
+
+    <main class="workouts-grid" id="workout-container">
+      
+      <article class="workout-card" data-category="A">
+        <div class="workout-header">
+          <div class="workout-title">
+            <h3>Treino A</h3>
+            <p>Costas + Bíceps (Ênfase Largura)</p>
+          </div>
+          <span class="workout-tag">Puxadas</span>
+        </div>
+        <div class="workout-body">
+          <div class="exercise-list">
+            <div class="exercise-item"><span class="ex-name">Puxada alta aberta</span><span class="ex-sets">4x</span><span class="ex-reps">8-12</span></div>
+            <div class="exercise-item"><span class="ex-name">Pulldown polia neutra</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span></div>
+            <div class="exercise-item"><span class="ex-name">Remada cavalinho</span><span class="ex-sets">3x</span><span class="ex-reps">8-10</span></div>
+            <div class="exercise-item"><span class="ex-name">Remada baixa polia</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span></div>
+            <div class="exercise-item"><span class="ex-name">Rosca direta barra</span><span class="ex-sets">3x</span><span class="ex-reps">8-10</span></div>
+            <div class="exercise-item"><span class="ex-name">Rosca alternada halter</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span></div>
+            <div class="exercise-item"><span class="ex-name">Elevação lateral no cabo</span><span class="ex-sets">3x</span><span class="ex-reps">15-20</span></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="workout-card" data-category="B">
+        <div class="workout-header">
+          <div class="workout-title">
+            <h3>Treino B</h3>
+            <p>Peito + Tríceps (Ênfase Superior)</p>
+          </div>
+          <span class="workout-tag">Supinos</span>
+        </div>
+        <div class="workout-body">
+          <div class="exercise-list">
+            <div class="exercise-item"><span class="ex-name">Supino inclinado com halteres</span><span class="ex-sets">4x</span><span class="ex-reps">8-10</span></div>
+            <div class="exercise-item"><span class="ex-name">Supino reto barra/máquina</span><span class="ex-sets">3x</span><span class="ex-reps">8-10</span></div>
+            <div class="exercise-item"><span class="ex-name">Cross over polia alta → baixa</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span></div>
+            <div class="exercise-item"><span class="ex-name">Peck deck / crucifixo máq.</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span></div>
+            <div class="exercise-item"><span class="ex-name">Tríceps corda</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span></div>
+            <div class="exercise-item"><span class="ex-name">Tríceps testa barra W</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span></div>
+            <div class="exercise-item"><span class="ex-name">Elevação lateral halteres</span><span class="ex-sets">4x</span><span class="ex-reps">15-20</span></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="workout-card" data-category="C">
+        <div class="workout-header">
+          <div class="workout-title">
+            <h3>Treino C</h3>
+            <p>Ombro + Perna (Ênfase Quadríceps)</p>
+          </div>
+          <span class="workout-tag">Pernas</span>
+        </div>
+        <div class="workout-body">
+          <div class="exercise-list">
+            <div class="exercise-item"><span class="ex-name">Leg press</span><span class="ex-sets">4x</span><span class="ex-reps">10-12</span></div>
+            <div class="exercise-item"><span class="ex-name">Hack machine</span><span class="ex-sets">3x</span><span class="ex-reps">8-10</span></div>
+            <div class="exercise-item"><span class="ex-name">Cadeira extensora</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span></div>
+            <div class="exercise-item"><span class="ex-name">Mesa flexora</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span></div>
+            <div class="exercise-item"><span class="ex-name">Cadeira flexora</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span></div>
+            <div class="exercise-item"><span class="ex-name">Desenvolvimento halteres</span><span class="ex-sets">4x</span><span class="ex-reps">8-10</span></div>
+            <div class="exercise-item"><span class="ex-name">Elevação lateral</span><span class="ex-sets">4x</span><span class="ex-reps">12-15</span></div>
+            <div class="exercise-item"><span class="ex-name">Peck deck posterior</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span></div>
+            <div class="exercise-item"><span class="ex-name">Encolhimento halteres</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="workout-card" data-category="A">
+        <div class="workout-header">
+          <div class="workout-title">
+            <h3>Treino A2</h3>
+            <p>Costas + Bíceps (Ênfase Remadas)</p>
+          </div>
+          <span class="workout-tag">Remadas</span>
+        </div>
+        <div class="workout-body">
+          <div class="exercise-list">
+            <div class="exercise-item"><span class="ex-name">Remada curvada barra</span><span class="ex-sets">4x</span><span class="ex-reps">8-10</span></div>
+            <div class="exercise-item"><span class="ex-name">Remada cavalinho</span><span class="ex-sets">3x</span><span class="ex-reps">10</span></div>
+            <div class="exercise-item"><span class="ex-name">Remada baixa polia</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span></div>
+            <div class="exercise-item"><span class="ex-name">Pulldown braço reto</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span></div>
+            <div class="exercise-item"><span class="ex-name">Rosca Scott</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span></div>
+            <div class="exercise-item"><span class="ex-name">Rosca martelo</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span></div>
+            <div class="exercise-item"><span class="ex-name">Elevação lateral no cabo</span><span class="ex-sets">3x</span><span class="ex-reps">15-20</span></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="workout-card" data-category="B">
+        <div class="workout-header">
+          <div class="workout-title">
+            <h3>Treino B2</h3>
+            <p>Peito + Tríceps (Ênfase Médio/Baixo)</p>
+          </div>
+          <span class="workout-tag">Supinos</span>
+        </div>
+        <div class="workout-body">
+          <div class="exercise-list">
+            <div class="exercise-item"><span class="ex-name">Supino reto barra</span><span class="ex-sets">4x</span><span class="ex-reps">8-10</span></div>
+            <div class="exercise-item"><span class="ex-name">Supino declinado máq/halter</span><span class="ex-sets">3x</span><span class="ex-reps">8-10</span></div>
+            <div class="exercise-item"><span class="ex-name">Cross over polia média</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span></div>
+            <div class="exercise-item"><span class="ex-name">Peck deck</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span></div>
+            <div class="exercise-item"><span class="ex-name">Tríceps corda</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span></div>
+            <div class="exercise-item"><span class="ex-name">Tríceps francês halter</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span></div>
+            <div class="exercise-item"><span class="ex-name">Elevação lateral halteres</span><span class="ex-sets">3x</span><span class="ex-reps">15-20</span></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="workout-card" data-category="C">
+        <div class="workout-header">
+          <div class="workout-title">
+            <h3>Treino C2</h3>
+            <p>Ombro + Perna (Ênfase Posterior)</p>
+          </div>
+          <span class="workout-tag">Pernas</span>
+        </div>
+        <div class="workout-body">
+          <div class="exercise-list">
+            <div class="exercise-item"><span class="ex-name">Mesa flexora</span><span class="ex-sets">4x</span><span class="ex-reps">10-12</span></div>
+            <div class="exercise-item"><span class="ex-name">Cadeira flexora</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span></div>
+            <div class="exercise-item"><span class="ex-name">Leg press pés altos</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span></div>
+            <div class="exercise-item"><span class="ex-name">Extensora leve</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span></div>
+            <div class="exercise-item"><span class="ex-name">Desenvolvimento halteres</span><span class="ex-sets">3x</span><span class="ex-reps">8-10</span></div>
+            <div class="exercise-item"><span class="ex-name">Elevação lateral</span><span class="ex-sets">4x</span><span class="ex-reps">12-15</span></div>
+            <div class="exercise-item"><span class="ex-name">Peck deck posterior</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span></div>
+          </div>
+        </div>
+      </article>
+
+    </main>
+
+  </div>
+
+  <button class="fab-button" onclick="alert('Bora treinar!')" aria-label="Iniciar Treino">
+    <div class="play-icon"></div>
+  </button>
+
+  <script>
+    function filterWorkouts(category, btnElement) {
+      // Atualiza o estilo visual dos botões
+      const buttons = document.querySelectorAll('.filter-btn');
+      buttons.forEach(btn => btn.classList.remove('active'));
+      btnElement.classList.add('active');
+
+      // Aplica o filtro nos cards
+      const cards = document.querySelectorAll('.workout-card');
+      cards.forEach(card => {
+        if (category === 'all' || card.getAttribute('data-category') === category) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+      
+      // Ajuste suave de scroll caso a pessoa esteja muito para baixo na página
+      const filterBar = document.querySelector('.filter-scroll');
+      if (window.scrollY > filterBar.offsetTop) {
+        window.scrollTo({
+          top: filterBar.offsetTop - 10,
+          behavior: 'smooth'
+        });
+      }
+    }
+  </script>
+</body>
+</html>
