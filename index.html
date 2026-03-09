@@ -3,616 +3,626 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>App de Treino - Ciclo ABC</title>
+  <title>App de Treino PRO - Ciclo ABC</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
+    /* ================= VARIÁVEIS DE TEMA ================= */
     :root {
-      --bg-app: #f4f7f9;
-      --card-bg: #ffffff;
-      --text-main: #1e293b;
-      --text-muted: #64748b;
-      --blue-primary: #2563eb;
-      --blue-light: #eff6ff;
-      --blue-gradient: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-      --accent: #38bdf8;
-      --border-line: #e2e8f0;
-      
-      --radius-lg: 24px;
-      --radius-md: 16px;
-      --radius-sm: 12px;
-      --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.03);
-      --shadow-hover: 0 12px 25px rgba(0, 0, 0, 0.08);
+      --bg-app: #f4f7f9; --card-bg: #ffffff; --text-main: #1e293b; --text-muted: #64748b;
+      --border-line: #e2e8f0; --input-bg: #f8fafc; --blue-light: #eff6ff; --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.03);
+      --blue-primary: #2563eb; --blue-gradient: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+      --green-success: #10b981; --orange-alert: #f59e0b; --radius-lg: 24px; --radius-md: 16px; --radius-sm: 12px;
+    }
+    [data-theme="dark"] {
+      --bg-app: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8;
+      --border-line: #334155; --input-bg: #0f172a; --blue-light: #1e3a8a; --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.4);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Poppins', sans-serif; background-color: var(--bg-app); color: var(--text-main); min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
 
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: var(--bg-app);
-      color: var(--text-main);
-      min-height: 100vh;
-      padding-bottom: 90px;
-    }
+    #app-screen, #dashboard-screen, #extras-screen { display: none; padding-bottom: 100px; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
 
-    .app-container {
-      max-width: 1400px; 
-      margin: 0 auto;
-      padding: 24px;
-    }
+    /* ================= LOGIN & REGISTRO ================= */
+    #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; background: var(--blue-gradient); }
+    .login-box { background: var(--card-bg); padding: 40px 30px; border-radius: var(--radius-lg); width: 100%; max-width: 400px; box-shadow: var(--shadow-soft); text-align: center; }
+    .login-box h2 { color: var(--text-main); margin-bottom: 8px; font-weight: 800; font-size: 28px; }
+    .login-box p { color: var(--text-muted); margin-bottom: 30px; font-size: 14px; }
+    .input-group { margin-bottom: 20px; text-align: left; }
+    .input-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-main); margin-bottom: 8px; }
+    .input-group input { width: 100%; padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-line); font-family: 'Poppins', sans-serif; font-size: 15px; background: var(--input-bg); color: var(--text-main); outline: none; transition: all 0.3s; }
+    .input-group input:focus { border-color: var(--blue-primary); }
+    .btn-login { width: 100%; padding: 14px; background: var(--blue-gradient); color: white; border: none; border-radius: var(--radius-md); font-family: 'Poppins', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: transform 0.2s; margin-top: 10px; }
+    .btn-login:active { transform: scale(0.96); }
+    .error-msg { color: #ef4444; font-size: 13px; margin-top: 10px; display: none; font-weight: 600;}
+    .success-msg { color: var(--green-success); font-size: 13px; margin-top: 10px; display: none; font-weight: 600;}
+    .toggle-auth { margin-top: 20px; font-size: 13px; color: var(--text-muted); cursor: pointer; font-weight: 600;}
+    .toggle-auth span { color: var(--blue-primary); }
 
-    /* Cabeçalho (Hero) */
-    .header {
-      background: var(--blue-gradient);
-      color: white;
-      border-radius: var(--radius-lg);
-      padding: 40px 32px;
-      margin-bottom: 30px;
-      box-shadow: 0 15px 30px -5px rgba(37, 99, 235, 0.25);
-      position: relative;
-      overflow: hidden;
-    }
+    /* ================= HEADER ================= */
+    .header { background: var(--blue-gradient); color: white; border-radius: var(--radius-lg); padding: 40px 32px; margin-bottom: 30px; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.2); }
+    .badge-top { display: inline-block; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px); padding: 8px 16px; border-radius: 30px; font-size: 13px; font-weight: 600; margin-bottom: 16px; }
+    .header h1 { font-size: clamp(28px, 4vw, 42px); font-weight: 800; line-height: 1.2; margin-bottom: 12px; }
+    .header-user { font-size: 14px; opacity: 0.9; margin-top: 10px; font-weight: 500;}
 
-    .header::after {
-      content: '';
-      position: absolute;
-      top: -30%; right: -10%;
-      width: 400px; height: 400px;
-      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-    }
-
-    .badge-top {
-      display: inline-block;
-      background: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(8px);
-      padding: 8px 16px;
-      border-radius: 30px;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      margin-bottom: 16px;
-    }
-
-    .header h1 {
-      font-size: clamp(28px, 4vw, 42px);
-      font-weight: 800;
-      line-height: 1.2;
-      margin-bottom: 12px;
-    }
-
-    .header p {
-      color: #e0f2fe;
-      font-size: clamp(14px, 2vw, 16px);
-      line-height: 1.6;
-      max-width: 800px;
-    }
-
-    .stats-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-top: 24px;
-    }
-
-    .stat-pill {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(5px);
-      padding: 12px 20px;
-      border-radius: var(--radius-sm);
-      min-width: max-content;
-      border: 1px solid rgba(255,255,255,0.2);
-    }
-
-    .stat-pill span {
-      display: block;
-      font-size: 11px;
-      text-transform: uppercase;
-      opacity: 0.85;
-      margin-bottom: 4px;
-      letter-spacing: 0.5px;
-    }
-
-    .stat-pill strong {
-      font-size: 16px;
-      font-weight: 700;
-    }
-
-    /* Sistema de Filtros Modernizado */
-    .filter-scroll {
-      position: sticky;
-      top: 0;
-      background: var(--bg-app);
-      padding: 16px 0 24px 0;
-      z-index: 10;
-    }
-
-    .filters {
-      display: flex;
-      gap: 12px;
-      overflow-x: auto;
-      scrollbar-width: none;
-      padding-bottom: 8px;
-    }
-    
+    /* ================= FILTROS E CARDS ================= */
+    .filter-scroll { position: sticky; top: 0; background: var(--bg-app); padding: 16px 0 24px 0; z-index: 10; transition: background 0.3s;}
+    .filters { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; padding-bottom: 8px; }
     .filters::-webkit-scrollbar { display: none; }
+    .filter-btn { background: var(--card-bg); border: 1px solid var(--border-line); color: var(--text-muted); padding: 12px 24px; border-radius: 30px; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.3s; }
+    .filter-btn.active { background: var(--blue-primary); border-color: var(--blue-primary); color: white; }
 
-    .filter-btn {
-      background: var(--card-bg);
-      border: none;
-      color: var(--text-muted);
-      padding: 12px 24px;
-      border-radius: 30px;
-      font-size: 14px;
-      font-family: 'Poppins', sans-serif;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-    }
-
-    .filter-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 15px -3px rgba(0,0,0,0.08);
-      color: var(--blue-primary);
-    }
-
-    .filter-btn.active {
-      background: var(--blue-gradient);
-      color: white;
-      box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
-    }
+    .workouts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px; }
+    .workout-card { background: var(--card-bg); border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); display: flex; flex-direction: column; transition: all 0.3s; border: 1px solid var(--border-line); }
+    .workout-card.hidden { display: none; }
+    .workout-header { padding: 24px; border-bottom: 1px solid var(--border-line); display: flex; justify-content: space-between; align-items: flex-start; }
+    .workout-title h3 { font-size: 20px; font-weight: 700; color: var(--text-main); }
+    .workout-title p { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+    .workout-tag { background: var(--blue-light); color: var(--blue-primary); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+    .workout-body { padding: 20px; flex-grow: 1; }
     
-    .filter-btn.active:hover {
-      color: white;
-    }
+    .exercise-list { display: flex; flex-direction: column; gap: 10px; }
+    .exercise-item { display: grid; grid-template-columns: auto 1fr auto auto 60px; gap: 10px; align-items: center; padding: 12px 14px; background: var(--bg-app); border-radius: var(--radius-md); font-size: 13px; cursor: pointer; transition: all 0.3s; }
+    .check-circle { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border-line); display: flex; align-items: center; justify-content: center; background: var(--card-bg); transition: all 0.2s; }
+    .check-circle svg { width: 14px; height: 14px; color: white; opacity: 0; transform: scale(0.5); transition: all 0.2s; }
+    .ex-name { font-weight: 600; color: var(--text-main); line-height: 1.2;}
+    .ex-sets { background: var(--card-bg); border: 1px solid var(--border-line); padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight: 700; color: var(--text-muted); text-align: center; }
+    .ex-reps { font-weight: 800; color: var(--blue-primary); text-align: right; }
+    .weight-input { width: 100%; padding: 6px; border-radius: 8px; border: 1px solid var(--border-line); background: var(--card-bg); color: var(--text-main); font-family: 'Poppins', sans-serif; font-size: 12px; font-weight: 600; text-align: center; outline: none; transition: border 0.3s; }
+    .weight-input:focus { border-color: var(--blue-primary); }
+    
+    .exercise-item.completed { background: transparent; opacity: 0.6; }
+    .exercise-item.completed .check-circle { background: var(--green-success); border-color: var(--green-success); }
+    .exercise-item.completed .check-circle svg { opacity: 1; transform: scale(1); }
+    .exercise-item.completed .ex-name { text-decoration: line-through; color: var(--text-muted); }
 
-    /* Grid de Treinos Responsivo */
-    .workouts-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 24px;
-    }
+    .notes-input { width: 100%; padding: 14px; border-radius: var(--radius-md); border: 1px dashed var(--border-line); background: var(--bg-app); color: var(--text-main); font-family: 'Poppins', sans-serif; font-size: 13px; outline: none; margin-top: 16px; resize: none; min-height: 80px; transition: border 0.3s; }
+    .notes-input:focus { border-color: var(--blue-primary); }
 
-    .workout-card {
-      background: var(--card-bg);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-soft);
-      overflow: hidden;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      animation: fadeIn 0.4s ease forwards;
-      display: flex;
-      flex-direction: column;
-    }
+    .btn-finish-workout { width: 100%; padding: 14px; margin-top: 12px; background: transparent; color: var(--blue-primary); border: 2px solid var(--blue-primary); border-radius: var(--radius-md); font-weight: 700; cursor: pointer; transition: all 0.3s; }
+    .btn-finish-workout:hover { background: var(--blue-primary); color: white; }
 
-    .workout-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-hover);
-    }
+    /* ================= DASHBOARD & GRÁFICOS ================= */
+    .dash-header h2 { font-size: 28px; font-weight: 800; color: var(--text-main); }
+    .chart-card { background: var(--card-bg); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-soft); margin: 24px 0; border: 1px solid var(--border-line); }
+    .chart-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 20px; color: var(--text-main); display: flex; justify-content: space-between; align-items: center;}
+    
+    .activity-chart { display: flex; justify-content: space-between; align-items: flex-end; height: 140px; padding-top: 10px; }
+    .bar-col { display: flex; flex-direction: column; align-items: center; gap: 10px; flex: 1; }
+    .bar-track { width: 16px; height: 100px; background: var(--bg-app); border-radius: 8px; position: relative; overflow: hidden; }
+    .bar-fill { position: absolute; bottom: 0; left: 0; right: 0; width: 100%; background: var(--border-line); border-radius: 8px; transition: height 0.8s; }
+    .bar-fill.active { background: linear-gradient(180deg, #34d399 0%, #10b981 100%); }
+    .bar-label { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+    
+    .weight-tracker-input { display: flex; gap: 10px; margin-bottom: 16px; }
+    .weight-tracker-input input { flex: 1; padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-line); font-family: 'Poppins', sans-serif; background: var(--bg-app); color: var(--text-main); outline: none; }
+    .btn-save-weight { background: var(--blue-primary); color: white; border: none; padding: 0 20px; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; }
+    .weight-history-list { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+    .weight-log-item { background: var(--bg-app); padding: 12px; border-radius: var(--radius-sm); min-width: 100px; text-align: center; border: 1px solid var(--border-line); }
+    .weight-log-item span { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;}
+    .weight-log-item strong { font-size: 16px; color: var(--text-main); }
 
-    .workout-card.hidden {
-      display: none;
-    }
+    .history-card { background: var(--card-bg); padding: 20px; border-radius: var(--radius-md); box-shadow: var(--shadow-soft); border: 1px solid var(--border-line); border-left: 5px solid var(--blue-primary); margin-bottom: 16px; cursor: pointer; }
+    .history-header { display: flex; justify-content: space-between; align-items: center; }
+    .history-info h4 { font-size: 16px; font-weight: 700; color: var(--text-main); }
+    .history-info p { font-size: 13px; color: var(--text-muted); }
+    .history-vol { display: inline-block; background: var(--blue-light); color: var(--blue-primary); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; margin-top: 6px; }
+    .history-date { background: var(--bg-app); color: var(--text-muted); padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; }
+    
+    .history-details { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-line); display: none; }
+    .detail-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-main); padding: 6px 0; border-bottom: 1px dashed var(--border-line); }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-weight { font-weight: 700; color: var(--blue-primary); background: var(--bg-app); padding: 2px 8px; border-radius: 4px;}
+    .history-notes { margin-top: 12px; padding: 12px; background: #fffbeb; color: #b45309; border-radius: 8px; font-size: 12px; font-style: italic; border: 1px solid #fde68a; }
+    [data-theme="dark"] .history-notes { background: #451a03; color: #fde68a; border-color: #78350f; }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(15px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    /* ================= EXTRAS (Ferramentas) ================= */
+    .tool-grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+    .tool-card { background: var(--card-bg); padding: 24px; border-radius: var(--radius-lg); border: 1px solid var(--border-line); box-shadow: var(--shadow-soft); }
+    .tool-card h3 { font-size: 18px; margin-bottom: 16px; color: var(--text-main); }
+    
+    .calc-row { display: flex; gap: 10px; margin-bottom: 12px; }
+    .calc-row input { flex: 1; padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-line); background: var(--bg-app); color: var(--text-main); outline: none; }
+    .btn-tool { background: var(--blue-primary); color: white; border: none; padding: 12px; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; width: 100%; transition: opacity 0.2s;}
+    .btn-tool:hover { opacity: 0.9; }
+    .calc-result { margin-top: 16px; padding: 16px; background: var(--blue-light); border-radius: var(--radius-md); text-align: center; color: var(--blue-primary); font-size: 14px; display: none; }
+    .calc-result strong { font-size: 24px; display: block; }
 
-    .workout-header {
-      padding: 24px;
-      border-bottom: 1px solid var(--border-line);
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      background: #fafaf9;
-    }
+    .btn-export { background: #10b981; margin-bottom: 12px; }
+    .btn-import-label { display: block; background: var(--bg-app); color: var(--text-main); border: 1px solid var(--border-line); padding: 12px; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; text-align: center; }
+    #import-file { display: none; }
 
-    .workout-title h3 {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 4px;
-    }
+    /* ================= CRONÔMETRO ================= */
+    .timer-fab { position: fixed; bottom: 90px; left: 20px; background: var(--card-bg); border: 2px solid var(--blue-primary); color: var(--blue-primary); width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 20px rgba(0,0,0,0.1); cursor: pointer; z-index: 90; font-weight: 800; font-size: 14px; transition: all 0.3s; }
+    .timer-fab.running { background: var(--blue-primary); color: white; animation: pulse-timer 1s infinite; }
+    @keyframes pulse-timer { 0% { box-shadow: 0 0 0 0 rgba(37,99,235,0.4); } 70% { box-shadow: 0 0 0 15px rgba(37,99,235,0); } 100% { box-shadow: 0 0 0 0 rgba(37,99,235,0); } }
+    .timer-panel { position: fixed; bottom: 160px; left: 20px; background: var(--card-bg); border: 1px solid var(--border-line); padding: 16px; border-radius: var(--radius-md); box-shadow: var(--shadow-soft); display: none; flex-direction: column; gap: 10px; z-index: 90; }
+    .timer-panel.show { display: flex; animation: fadeUp 0.2s ease; }
+    .timer-btn-option { background: var(--bg-app); border: none; padding: 10px 20px; border-radius: 8px; color: var(--text-main); font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; }
+    .timer-btn-option:hover { background: var(--blue-light); color: var(--blue-primary); }
+    .timer-close { font-size: 12px; text-align: center; color: var(--text-muted); cursor: pointer; margin-top: 4px; }
 
-    .workout-title p {
-      font-size: 13px;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
+    /* ================= BOTTOM NAVIGATION ================= */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card-bg); box-shadow: 0 -4px 20px rgba(0,0,0,0.05); display: flex; justify-content: space-around; padding: 12px 0 24px 0; z-index: 100; border-top: 1px solid var(--border-line); transition: background 0.3s; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--text-muted); font-size: 12px; font-weight: 600; cursor: pointer; }
+    .nav-item.active { color: var(--blue-primary); }
+    .nav-item svg { width: 24px; height: 24px; transition: transform 0.2s; }
+    .nav-item.active svg { transform: scale(1.1); stroke-width: 2.5; }
 
-    .workout-tag {
-      background: var(--blue-light);
-      color: var(--blue-primary);
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-    }
-
-    .workout-body {
-      padding: 20px;
-      flex-grow: 1;
-    }
-
-    .exercise-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    /* Item de Exercício e Sistema de Checkbox */
-    .exercise-item {
-      display: grid;
-      /* Alterado para dar espaço ao botão de check */
-      grid-template-columns: auto 1fr auto auto;
-      gap: 12px;
-      align-items: center;
-      padding: 12px 14px;
-      background: var(--bg-app);
-      border-radius: var(--radius-md);
-      font-size: 14px;
-      transition: all 0.3s ease;
-      cursor: pointer; /* Permite clicar na linha toda */
-    }
-
-    .exercise-item:hover {
-      background: var(--blue-light);
-    }
-
-    /* Botão de Check Circle */
-    .check-circle {
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      border: 2px solid #cbd5e1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-      background: white;
-    }
-
-    .check-circle svg {
-      width: 14px;
-      height: 14px;
-      color: white;
-      opacity: 0;
-      transform: scale(0.5);
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .ex-name {
-      font-weight: 600;
-      color: var(--text-main);
-      transition: all 0.3s ease;
-    }
-
-    .ex-sets {
-      background: var(--card-bg);
-      border: 1px solid var(--border-line);
-      padding: 4px 10px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-align: center;
-      transition: all 0.3s ease;
-    }
-
-    .ex-reps {
-      font-weight: 800;
-      color: var(--blue-primary);
-      text-align: right;
-      min-width: 55px;
-      transition: all 0.3s ease;
-    }
-
-    /* Estado de Exercício Concluído */
-    .exercise-item.completed {
-      background: transparent;
-      opacity: 0.6;
-    }
-
-    .exercise-item.completed .check-circle {
-      background: var(--blue-primary);
-      border-color: var(--blue-primary);
-    }
-
-    .exercise-item.completed .check-circle svg {
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    .exercise-item.completed .ex-name {
-      text-decoration: line-through;
-      color: var(--text-muted);
-    }
-
-    /* Botão Flutuante Piscante (FAB) */
-    .fab-button {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      background: var(--blue-gradient);
-      color: white;
-      width: 68px;
-      height: 68px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
-      cursor: pointer;
-      z-index: 100;
-      border: none;
-      animation: pulse 2s infinite cubic-bezier(0.66, 0, 0, 1);
-      transition: transform 0.2s;
-    }
-
-    .fab-button:hover {
-      transform: scale(1.05);
-    }
-
-    .fab-button:active {
-      transform: scale(0.95);
-    }
-
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.6); }
-      70% { box-shadow: 0 0 0 25px rgba(37, 99, 235, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
-    }
-
-    .play-icon {
-      width: 0;
-      height: 0;
-      border-top: 12px solid transparent;
-      border-bottom: 12px solid transparent;
-      border-left: 18px solid white;
-      margin-left: 6px; 
-    }
-
-    @media (max-width: 768px) {
-      .app-container { padding: 16px; }
-      .header { padding: 30px 20px; border-radius: 20px; }
-      .fab-button { bottom: 20px; right: 20px; width: 60px; height: 60px; }
-    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 768px) { .container { padding: 16px; } .header { padding: 30px 20px; border-radius: 20px; } .bar-track { width: 12px; } }
   </style>
 </head>
 <body>
 
-  <div class="app-container">
-    
+  <div id="login-screen">
+    <div class="login-box">
+      <h2 id="auth-title">Entrar</h2>
+      <p id="auth-subtitle">Faça login para acessar sua rotina.</p>
+      
+      <div class="input-group">
+        <label>Usuário</label>
+        <input type="text" id="username" placeholder="Digite seu usuário" autocapitalize="off">
+      </div>
+      <div class="input-group">
+        <label>Senha</label>
+        <input type="password" id="password" placeholder="Sua senha">
+      </div>
+      
+      <button class="btn-login" id="auth-btn" onclick="handleAuth()">Entrar no App</button>
+      <div class="error-msg" id="auth-error">Usuário ou senha incorretos!</div>
+      <div class="success-msg" id="auth-success">Conta criada! Faça o login.</div>
+      
+      <div class="toggle-auth" onclick="toggleAuthMode()">
+        <span id="auth-toggle-text">Ainda não tem conta? Criar uma agora.</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="app-screen" class="container">
     <header class="header">
       <div class="badge-top">Treino ABC+Descanso</div>
       <h1>Ciclo ABC <br/>Estética & Volume</h1>
-      <p>Treino focado em reduzir gordura sem perder massa magra - tempo total de treino 1h30.</p>
-      
-      <div class="stats-row">
-        <div class="stat-pill">
-          <span>Foco Principal</span>
-          <strong>Hipertrofia</strong>
-        </div>
-        <div class="stat-pill">
-          <span>Duração/Dia</span>
-          <strong>60-90 min</strong>
-        </div>
-      </div>
+      <div class="header-user">Bem-vindo(a), <span id="display-username" style="font-weight: 700; color: #facc15;"></span></div>
     </header>
 
     <div class="filter-scroll">
       <div class="filters">
-        <button class="filter-btn active" onclick="filterWorkouts('all', this)">Todos os Treinos</button>
-        <button class="filter-btn" onclick="filterWorkouts('A', this)">Treino A (Costas)</button>
-        <button class="filter-btn" onclick="filterWorkouts('B', this)">Treino B (Peito)</button>
-        <button class="filter-btn" onclick="filterWorkouts('C', this)">Treino C (Perna)</button>
+        <button class="filter-btn active" onclick="filterWorkouts('all', this)">Todos</button>
+        <button class="filter-btn" onclick="filterWorkouts('A', this)">Treino A</button>
+        <button class="filter-btn" onclick="filterWorkouts('B', this)">Treino B</button>
+        <button class="filter-btn" onclick="filterWorkouts('C', this)">Treino C</button>
       </div>
     </div>
 
     <main class="workouts-grid" id="workout-container">
-      
       <template id="check-template">
-        <div class="check-circle">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        </div>
+        <div class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
       </template>
 
       <article class="workout-card" data-category="A">
         <div class="workout-header">
-          <div class="workout-title">
-            <h3>Treino A</h3>
-            <p>Costas + Bíceps (Ênfase Largura)</p>
-          </div>
+          <div class="workout-title"><h3>Treino A</h3><p>Costas + Bíceps (Ênfase Largura)</p></div>
           <span class="workout-tag">Puxadas</span>
         </div>
         <div class="workout-body">
           <div class="exercise-list">
-            <div class="exercise-item"><span class="ex-name">Puxada alta aberta</span><span class="ex-sets">4x</span><span class="ex-reps">8-12</span></div>
-            <div class="exercise-item"><span class="ex-name">Pulldown polia neutra</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span></div>
-            <div class="exercise-item"><span class="ex-name">Remada cavalinho</span><span class="ex-sets">3x</span><span class="ex-reps">8-10</span></div>
-            <div class="exercise-item"><span class="ex-name">Remada baixa polia</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span></div>
-            <div class="exercise-item"><span class="ex-name">Rosca direta barra</span><span class="ex-sets">3x</span><span class="ex-reps">8-10</span></div>
-            <div class="exercise-item"><span class="ex-name">Rosca alternada halter</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span></div>
-            <div class="exercise-item"><span class="ex-name">Elevação lateral no cabo</span><span class="ex-sets">3x</span><span class="ex-reps">15-20</span></div>
+            <div class="exercise-item"><span class="ex-name">Puxada alta aberta</span><span class="ex-sets">4x</span><span class="ex-reps">8-12</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Pulldown polia neutra</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Remada cavalinho</span><span class="ex-sets">3x</span><span class="ex-reps">8-10</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Remada baixa polia</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Rosca direta barra</span><span class="ex-sets">3x</span><span class="ex-reps">8-10</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Rosca alternada halter</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Elevação lateral cabo</span><span class="ex-sets">3x</span><span class="ex-reps">15-20</span><input type="number" class="weight-input" placeholder="kg"></div>
           </div>
+          <textarea class="notes-input" placeholder="Anotações do treino..."></textarea>
+          <button class="btn-finish-workout" onclick="finishWorkout('Treino A - Costas', this)">Finalizar Treino A</button>
         </div>
       </article>
 
       <article class="workout-card" data-category="B">
         <div class="workout-header">
-          <div class="workout-title">
-            <h3>Treino B</h3>
-            <p>Peito + Tríceps (Ênfase Superior)</p>
-          </div>
+          <div class="workout-title"><h3>Treino B</h3><p>Peito + Tríceps (Ênfase Superior)</p></div>
           <span class="workout-tag">Supinos</span>
         </div>
         <div class="workout-body">
           <div class="exercise-list">
-            <div class="exercise-item"><span class="ex-name">Supino inclinado com halteres</span><span class="ex-sets">4x</span><span class="ex-reps">8-10</span></div>
-            <div class="exercise-item"><span class="ex-name">Supino reto barra/máquina</span><span class="ex-sets">3x</span><span class="ex-reps">8-10</span></div>
-            <div class="exercise-item"><span class="ex-name">Cross over polia alta → baixa</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span></div>
-            <div class="exercise-item"><span class="ex-name">Peck deck / crucifixo máq.</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span></div>
-            <div class="exercise-item"><span class="ex-name">Tríceps corda</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span></div>
-            <div class="exercise-item"><span class="ex-name">Tríceps testa barra W</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span></div>
-            <div class="exercise-item"><span class="ex-name">Elevação lateral halteres</span><span class="ex-sets">4x</span><span class="ex-reps">15-20</span></div>
+            <div class="exercise-item"><span class="ex-name">Supino inclinado halteres</span><span class="ex-sets">4x</span><span class="ex-reps">8-10</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Supino reto barra</span><span class="ex-sets">3x</span><span class="ex-reps">8-10</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Cross over polia alta → baixa</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Peck deck / crucifixo</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Tríceps corda</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Tríceps testa barra W</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Elevação lateral halteres</span><span class="ex-sets">4x</span><span class="ex-reps">15-20</span><input type="number" class="weight-input" placeholder="kg"></div>
           </div>
+          <textarea class="notes-input" placeholder="Anotações do treino..."></textarea>
+          <button class="btn-finish-workout" onclick="finishWorkout('Treino B - Peito', this)">Finalizar Treino B</button>
         </div>
       </article>
 
       <article class="workout-card" data-category="C">
         <div class="workout-header">
-          <div class="workout-title">
-            <h3>Treino C</h3>
-            <p>Ombro + Perna (Ênfase Quadríceps)</p>
-          </div>
+          <div class="workout-title"><h3>Treino C</h3><p>Ombro + Perna (Ênfase Quadríceps)</p></div>
           <span class="workout-tag">Pernas</span>
         </div>
         <div class="workout-body">
           <div class="exercise-list">
-            <div class="exercise-item"><span class="ex-name">Leg press</span><span class="ex-sets">4x</span><span class="ex-reps">10-12</span></div>
-            <div class="exercise-item"><span class="ex-name">Hack machine</span><span class="ex-sets">3x</span><span class="ex-reps">8-10</span></div>
-            <div class="exercise-item"><span class="ex-name">Cadeira extensora</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span></div>
-            <div class="exercise-item"><span class="ex-name">Mesa flexora</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span></div>
-            <div class="exercise-item"><span class="ex-name">Cadeira flexora</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span></div>
-            <div class="exercise-item"><span class="ex-name">Desenvolvimento halteres</span><span class="ex-sets">4x</span><span class="ex-reps">8-10</span></div>
-            <div class="exercise-item"><span class="ex-name">Elevação lateral</span><span class="ex-sets">4x</span><span class="ex-reps">12-15</span></div>
-            <div class="exercise-item"><span class="ex-name">Peck deck posterior</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span></div>
-            <div class="exercise-item"><span class="ex-name">Encolhimento halteres</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span></div>
+            <div class="exercise-item"><span class="ex-name">Leg press</span><span class="ex-sets">4x</span><span class="ex-reps">10-12</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Hack machine</span><span class="ex-sets">3x</span><span class="ex-reps">8-10</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Cadeira extensora</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Mesa flexora</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Cadeira flexora</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Desenvolvimento halteres</span><span class="ex-sets">4x</span><span class="ex-reps">8-10</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Elevação lateral</span><span class="ex-sets">4x</span><span class="ex-reps">12-15</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Peck deck posterior</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Encolhimento halteres</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span><input type="number" class="weight-input" placeholder="kg"></div>
           </div>
+          <textarea class="notes-input" placeholder="Anotações do treino..."></textarea>
+          <button class="btn-finish-workout" onclick="finishWorkout('Treino C - Perna', this)">Finalizar Treino C</button>
         </div>
       </article>
 
       <article class="workout-card" data-category="A">
         <div class="workout-header">
-          <div class="workout-title">
-            <h3>Treino A2</h3>
-            <p>Costas + Bíceps (Ênfase Remadas)</p>
-          </div>
+          <div class="workout-title"><h3>Treino A2</h3><p>Costas + Bíceps (Ênfase Remadas)</p></div>
           <span class="workout-tag">Remadas</span>
         </div>
         <div class="workout-body">
           <div class="exercise-list">
-            <div class="exercise-item"><span class="ex-name">Remada curvada barra</span><span class="ex-sets">4x</span><span class="ex-reps">8-10</span></div>
-            <div class="exercise-item"><span class="ex-name">Remada cavalinho</span><span class="ex-sets">3x</span><span class="ex-reps">10</span></div>
-            <div class="exercise-item"><span class="ex-name">Remada baixa polia</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span></div>
-            <div class="exercise-item"><span class="ex-name">Pulldown braço reto</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span></div>
-            <div class="exercise-item"><span class="ex-name">Rosca Scott</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span></div>
-            <div class="exercise-item"><span class="ex-name">Rosca martelo</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span></div>
-            <div class="exercise-item"><span class="ex-name">Elevação lateral no cabo</span><span class="ex-sets">3x</span><span class="ex-reps">15-20</span></div>
+            <div class="exercise-item"><span class="ex-name">Remada curvada barra</span><span class="ex-sets">4x</span><span class="ex-reps">8-10</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Remada cavalinho</span><span class="ex-sets">3x</span><span class="ex-reps">10</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Remada baixa polia</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Pulldown braço reto</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Rosca Scott</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Rosca martelo</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Elevação lateral cabo</span><span class="ex-sets">3x</span><span class="ex-reps">15-20</span><input type="number" class="weight-input" placeholder="kg"></div>
           </div>
+          <textarea class="notes-input" placeholder="Anotações do treino..."></textarea>
+          <button class="btn-finish-workout" onclick="finishWorkout('Treino A2 - Costas', this)">Finalizar Treino A2</button>
         </div>
       </article>
 
       <article class="workout-card" data-category="B">
         <div class="workout-header">
-          <div class="workout-title">
-            <h3>Treino B2</h3>
-            <p>Peito + Tríceps (Ênfase Médio/Baixo)</p>
-          </div>
+          <div class="workout-title"><h3>Treino B2</h3><p>Peito + Tríceps (Ênfase Médio/Baixo)</p></div>
           <span class="workout-tag">Supinos</span>
         </div>
         <div class="workout-body">
           <div class="exercise-list">
-            <div class="exercise-item"><span class="ex-name">Supino reto barra</span><span class="ex-sets">4x</span><span class="ex-reps">8-10</span></div>
-            <div class="exercise-item"><span class="ex-name">Supino declinado máq/halter</span><span class="ex-sets">3x</span><span class="ex-reps">8-10</span></div>
-            <div class="exercise-item"><span class="ex-name">Cross over polia média</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span></div>
-            <div class="exercise-item"><span class="ex-name">Peck deck</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span></div>
-            <div class="exercise-item"><span class="ex-name">Tríceps corda</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span></div>
-            <div class="exercise-item"><span class="ex-name">Tríceps francês halter</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span></div>
-            <div class="exercise-item"><span class="ex-name">Elevação lateral halteres</span><span class="ex-sets">3x</span><span class="ex-reps">15-20</span></div>
+            <div class="exercise-item"><span class="ex-name">Supino reto barra</span><span class="ex-sets">4x</span><span class="ex-reps">8-10</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Supino declinado</span><span class="ex-sets">3x</span><span class="ex-reps">8-10</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Cross over polia média</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Peck deck</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Tríceps corda</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Tríceps francês halter</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Elevação lateral halteres</span><span class="ex-sets">3x</span><span class="ex-reps">15-20</span><input type="number" class="weight-input" placeholder="kg"></div>
           </div>
+          <textarea class="notes-input" placeholder="Anotações do treino..."></textarea>
+          <button class="btn-finish-workout" onclick="finishWorkout('Treino B2 - Peito', this)">Finalizar Treino B2</button>
         </div>
       </article>
 
       <article class="workout-card" data-category="C">
         <div class="workout-header">
-          <div class="workout-title">
-            <h3>Treino C2</h3>
-            <p>Ombro + Perna (Ênfase Posterior)</p>
-          </div>
+          <div class="workout-title"><h3>Treino C2</h3><p>Ombro + Perna (Ênfase Posterior)</p></div>
           <span class="workout-tag">Pernas</span>
         </div>
         <div class="workout-body">
           <div class="exercise-list">
-            <div class="exercise-item"><span class="ex-name">Mesa flexora</span><span class="ex-sets">4x</span><span class="ex-reps">10-12</span></div>
-            <div class="exercise-item"><span class="ex-name">Cadeira flexora</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span></div>
-            <div class="exercise-item"><span class="ex-name">Leg press pés altos</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span></div>
-            <div class="exercise-item"><span class="ex-name">Extensora leve</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span></div>
-            <div class="exercise-item"><span class="ex-name">Desenvolvimento halteres</span><span class="ex-sets">3x</span><span class="ex-reps">8-10</span></div>
-            <div class="exercise-item"><span class="ex-name">Elevação lateral</span><span class="ex-sets">4x</span><span class="ex-reps">12-15</span></div>
-            <div class="exercise-item"><span class="ex-name">Peck deck posterior</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span></div>
+            <div class="exercise-item"><span class="ex-name">Mesa flexora</span><span class="ex-sets">4x</span><span class="ex-reps">10-12</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Cadeira flexora</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Leg press pés altos</span><span class="ex-sets">3x</span><span class="ex-reps">10-12</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Extensora leve</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Desenvolvimento halteres</span><span class="ex-sets">3x</span><span class="ex-reps">8-10</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Elevação lateral</span><span class="ex-sets">4x</span><span class="ex-reps">12-15</span><input type="number" class="weight-input" placeholder="kg"></div>
+            <div class="exercise-item"><span class="ex-name">Peck deck posterior</span><span class="ex-sets">3x</span><span class="ex-reps">12-15</span><input type="number" class="weight-input" placeholder="kg"></div>
           </div>
+          <textarea class="notes-input" placeholder="Anotações do treino..."></textarea>
+          <button class="btn-finish-workout" onclick="finishWorkout('Treino C2 - Perna', this)">Finalizar Treino C2</button>
         </div>
       </article>
 
     </main>
-
   </div>
 
-  <button class="fab-button" onclick="resetAllChecks()" aria-label="Zerar Treino">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; color: white;">
-      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-      <path d="M3 3v5h5"></path>
-    </svg>
-  </button>
+  <div id="dashboard-screen" class="container">
+    <div class="dash-header">
+      <h2>Seu Progresso</h2>
+      <p style="color: var(--text-muted); font-size: 14px;">Métricas e histórico de evolução.</p>
+    </div>
+
+    <div class="chart-card">
+      <h3>Evolução de Peso</h3>
+      <div class="weight-tracker-input">
+        <input type="number" id="input-body-weight" placeholder="Seu peso hoje (Ex: 88.5)" step="0.1">
+        <button class="btn-save-weight" onclick="saveBodyWeight()">Salvar</button>
+      </div>
+      <div class="weight-history-list" id="weight-list-container"></div>
+    </div>
+    
+    <div class="chart-card">
+      <h3>Atividade (Últimos 7 dias)</h3>
+      <div class="activity-chart" id="chart-container"></div>
+    </div>
+
+    <h3 style="font-size: 16px; margin-bottom: 16px; color: var(--text-main);">Histórico de Treinos</h3>
+    <div id="history-container"></div>
+  </div>
+
+  <div id="extras-screen" class="container">
+    <div class="dash-header">
+      <h2>Ferramentas</h2>
+      <p style="color: var(--text-muted); font-size: 14px;">Calculadoras e configurações.</p>
+    </div>
+
+    <div class="tool-grid">
+      <div class="tool-card">
+        <h3>Calculadora de 1RM</h3>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Descubra sua carga máxima estimada para 1 repetição.</p>
+        <div class="calc-row">
+          <input type="number" id="rm-weight" placeholder="Peso (kg)">
+          <input type="number" id="rm-reps" placeholder="Repetições">
+        </div>
+        <button class="btn-tool" onclick="calculate1RM()">Calcular 1RM</button>
+        <div class="calc-result" id="rm-result"></div>
+      </div>
+
+      <div class="tool-card">
+        <h3>Preferências e Dados</h3>
+        <button class="btn-tool" style="background: var(--bg-app); color: var(--text-main); border: 1px solid var(--border-line); margin-bottom: 20px;" onclick="toggleTheme()">
+          🌓 Alternar Tema Claro/Escuro
+        </button>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Salve ou restaure seu histórico para não perder nada.</p>
+        <button class="btn-tool btn-export" onclick="exportData()">📥 Exportar Backup</button>
+        <label for="import-file" class="btn-import-label">📤 Importar Backup</label>
+        <input type="file" id="import-file" accept=".json" onchange="importData(event)">
+      </div>
+    </div>
+  </div>
+
+  <div class="timer-fab" id="timer-fab" onclick="toggleTimerPanel()" title="Cronômetro">⏱️</div>
+  <div class="timer-panel" id="timer-panel">
+    <button class="timer-btn-option" onclick="startTimer(45)">45 seg</button>
+    <button class="timer-btn-option" onclick="startTimer(60)">60 seg</button>
+    <button class="timer-btn-option" onclick="startTimer(90)">90 seg</button>
+    <div class="timer-close" onclick="stopTimer()">Zerar / Fechar</div>
+  </div>
+
+  <div class="bottom-nav" id="bottom-nav" style="display: none;">
+    <div class="nav-item active" onclick="switchTab('app-screen', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="6.5"></line></svg>
+      <span>Treinos</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('dashboard-screen', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+      <span>Dados</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('extras-screen', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+      <span>Extras</span>
+    </div>
+    <div class="nav-item" onclick="logout()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+      <span>Sair</span>
+    </div>
+  </div>
 
   <script>
-    // Injeta o círculo de check em todos os itens de exercício
-    const template = document.getElementById('check-template').content;
-    const exerciseItems = document.querySelectorAll('.exercise-item');
-    
-    exerciseItems.forEach(item => {
-      // Clona o HTML do círculo e insere no início do item
-      const checkNode = document.importNode(template, true);
-      item.insertBefore(checkNode, item.firstChild);
-      
-      // Adiciona o evento de clique para marcar/desmarcar
-      item.addEventListener('click', function() {
-        this.classList.toggle('completed');
-      });
-    });
+    let isRegisterMode = false;
+    let currentUser = null;
 
-    // Função de filtro dos cards
-    function filterWorkouts(category, btnElement) {
-      const buttons = document.querySelectorAll('.filter-btn');
-      buttons.forEach(btn => btn.classList.remove('active'));
-      btnElement.classList.add('active');
-
-      const cards = document.querySelectorAll('.workout-card');
-      cards.forEach(card => {
-        if (category === 'all' || card.getAttribute('data-category') === category) {
-          card.classList.remove('hidden');
-        } else {
-          card.classList.add('hidden');
-        }
-      });
+    window.onload = () => {
+      if(localStorage.getItem('theme') === 'dark') document.body.setAttribute('data-theme', 'dark');
       
-      const filterBar = document.querySelector('.filter-scroll');
-      if (window.scrollY > filterBar.offsetTop) {
-        window.scrollTo({
-          top: filterBar.offsetTop - 10,
-          behavior: 'smooth'
-        });
+      const loggedUser = localStorage.getItem('appTreinoCurrent');
+      if (loggedUser) { currentUser = loggedUser; showApp(); }
+      injectCheckmarks();
+    };
+
+    function toggleAuthMode() {
+      isRegisterMode = !isRegisterMode;
+      document.getElementById('auth-error').style.display = 'none'; document.getElementById('auth-success').style.display = 'none';
+      if(isRegisterMode) {
+        document.getElementById('auth-title').innerText = "Criar Conta"; document.getElementById('auth-subtitle').innerText = "Crie seu usuário.";
+        document.getElementById('auth-btn').innerText = "Registrar"; document.getElementById('auth-toggle-text').innerText = "Já tem uma conta? Faça login.";
+      } else {
+        document.getElementById('auth-title').innerText = "Entrar"; document.getElementById('auth-subtitle').innerText = "Acesse sua rotina.";
+        document.getElementById('auth-btn').innerText = "Entrar"; document.getElementById('auth-toggle-text').innerText = "Ainda não tem conta? Criar uma agora.";
       }
     }
 
-    // Função para o botão flutuante (Zerar todas as marcações)
-    function resetAllChecks() {
-      if(confirm("Deseja desmarcar todos os exercícios?")) {
-        const items = document.querySelectorAll('.exercise-item.completed');
-        items.forEach(item => item.classList.remove('completed'));
+    function handleAuth() {
+      const user = document.getElementById('username').value.toLowerCase().trim();
+      const pass = document.getElementById('password').value;
+      const errorDiv = document.getElementById('auth-error'); const successDiv = document.getElementById('auth-success');
+
+      if(!user || !pass) { errorDiv.innerText = "Preencha tudo!"; errorDiv.style.display = 'block'; return; }
+      let usersDB = JSON.parse(localStorage.getItem('appTreinoUsersDB')) || {};
+
+      if(isRegisterMode) {
+        if(usersDB[user]) { errorDiv.innerText = "Usuário já existe!"; errorDiv.style.display = 'block'; } 
+        else {
+          usersDB[user] = pass; localStorage.setItem('appTreinoUsersDB', JSON.stringify(usersDB));
+          successDiv.style.display = 'block'; errorDiv.style.display = 'none'; document.getElementById('password').value = '';
+          setTimeout(() => { toggleAuthMode(); }, 1500);
+        }
+      } else {
+        if(usersDB[user] && usersDB[user] === pass || (user === "treino" && pass === "123")) {
+          errorDiv.style.display = 'none'; currentUser = user; localStorage.setItem('appTreinoCurrent', user); showApp();
+        } else {
+          errorDiv.innerText = "Credenciais incorretas!"; errorDiv.style.display = 'block';
+        }
       }
+    }
+
+    function logout() {
+      localStorage.removeItem('appTreinoCurrent'); currentUser = null;
+      document.getElementById('login-screen').style.display = 'flex';
+      ['app-screen', 'dashboard-screen', 'extras-screen', 'bottom-nav', 'timer-fab'].forEach(id => document.getElementById(id).style.display = 'none');
+      document.getElementById('username').value = ''; document.getElementById('password').value = '';
+    }
+
+    function showApp() {
+      document.getElementById('login-screen').style.display = 'none'; document.getElementById('app-screen').style.display = 'block';
+      document.getElementById('bottom-nav').style.display = 'flex'; document.getElementById('timer-fab').style.display = 'flex';
+      document.getElementById('display-username').innerText = currentUser.charAt(0).toUpperCase() + currentUser.slice(1);
+      renderDashboard();
+    }
+
+    function switchTab(screenId, navElement) {
+      ['app-screen', 'dashboard-screen', 'extras-screen'].forEach(id => document.getElementById(id).style.display = 'none');
+      document.getElementById(screenId).style.display = 'block';
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); navElement.classList.add('active');
+      if (screenId === 'dashboard-screen') renderDashboard();
+      window.scrollTo(0,0);
+    }
+
+    function toggleTheme() {
+      const body = document.body;
+      if (body.getAttribute('data-theme') === 'dark') { body.removeAttribute('data-theme'); localStorage.setItem('theme', 'light'); } 
+      else { body.setAttribute('data-theme', 'dark'); localStorage.setItem('theme', 'dark'); }
+    }
+
+    let timerInterval; let timeLeft = 0; const fab = document.getElementById('timer-fab'); const panel = document.getElementById('timer-panel');
+    function toggleTimerPanel() { panel.classList.toggle('show'); }
+    function startTimer(seconds) {
+      clearInterval(timerInterval); timeLeft = seconds; panel.classList.remove('show'); fab.classList.add('running'); fab.innerText = timeLeft + "s";
+      timerInterval = setInterval(() => {
+        timeLeft--; fab.innerText = timeLeft + "s";
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval); fab.classList.remove('running'); fab.innerText = "⏱️";
+          if(navigator.vibrate) navigator.vibrate([200, 100, 200]); alert("Descanso encerrado!");
+        }
+      }, 1000);
+    }
+    function stopTimer() { clearInterval(timerInterval); fab.classList.remove('running'); fab.innerText = "⏱️"; panel.classList.remove('show'); }
+
+    function injectCheckmarks() {
+      const template = document.getElementById('check-template').content;
+      document.querySelectorAll('.exercise-item').forEach(item => {
+        const checkNode = document.importNode(template, true); item.insertBefore(checkNode, item.firstChild);
+        item.addEventListener('click', function(e) { if (e.target.tagName.toLowerCase() === 'input') return; this.classList.toggle('completed'); });
+      });
+    }
+
+    function finishWorkout(workoutName, buttonElement) {
+      const parentCard = buttonElement.closest('.workout-card');
+      const exercisesNodes = parentCard.querySelectorAll('.exercise-item');
+      const notesInput = parentCard.querySelector('.notes-input');
+      
+      let exercisesData = []; let totalVolume = 0;
+      exercisesNodes.forEach(item => {
+        const name = item.querySelector('.ex-name').innerText;
+        const weightInput = item.querySelector('.weight-input').value;
+        const setsRaw = item.querySelector('.ex-sets').innerText;
+        const repsRaw = item.querySelector('.ex-reps').innerText;
+
+        if(weightInput) {
+          exercisesData.push({ name: name, weight: weightInput });
+          const sets = parseInt(setsRaw.replace(/\D/g, '')) || 0;
+          const maxReps = parseInt(repsRaw.split('-').pop()) || 0;
+          const weight = parseFloat(weightInput) || 0;
+          totalVolume += (sets * maxReps * weight);
+        }
+      });
+
+      const now = new Date();
+      const record = { 
+        name: workoutName, date: now.toLocaleDateString('pt-BR'), 
+        time: now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }), 
+        id: Date.now(), exercises: exercisesData, notes: notesInput ? notesInput.value : "", volume: totalVolume
+      };
+
+      const historyKey = 'appTreinoHistorico_' + currentUser;
+      let history = JSON.parse(localStorage.getItem(historyKey)) || [];
+      history.unshift(record); localStorage.setItem(historyKey, JSON.stringify(history));
+
+      const originalText = buttonElement.innerText; buttonElement.innerText = "✓ Salvo!";
+      buttonElement.style.color = "var(--green-success)"; buttonElement.style.borderColor = "var(--green-success)";
+      exercisesNodes.forEach(item => { item.classList.remove('completed'); item.querySelector('.weight-input').value = ''; });
+      if(notesInput) notesInput.value = '';
+      setTimeout(() => { buttonElement.innerText = originalText; buttonElement.style.color = ""; buttonElement.style.borderColor = ""; }, 3000);
+    }
+
+    function saveBodyWeight() {
+      const weightInput = document.getElementById('input-body-weight').value;
+      if(!weightInput) return;
+      const weightKey = 'appTreinoPeso_' + currentUser; let weightHistory = JSON.parse(localStorage.getItem(weightKey)) || [];
+      weightHistory.unshift({ weight: parseFloat(weightInput).toFixed(1), date: new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) });
+      localStorage.setItem(weightKey, JSON.stringify(weightHistory));
+      document.getElementById('input-body-weight').value = ''; renderBodyWeight();
+    }
+
+    function renderBodyWeight() {
+      const weightHistory = JSON.parse(localStorage.getItem('appTreinoPeso_' + currentUser)) || [];
+      const container = document.getElementById('weight-list-container');
+      if(weightHistory.length === 0) { container.innerHTML = `<p style="font-size:12px; color:var(--text-muted); padding:10px;">Nenhum peso registrado.</p>`; return; }
+      container.innerHTML = weightHistory.slice(0, 10).map(item => `<div class="weight-log-item"><span>${item.date}</span><strong>${item.weight} kg</strong></div>`).join('');
+    }
+
+    function renderDashboard() {
+      renderBodyWeight();
+      const container = document.getElementById('history-container'); const chartContainer = document.getElementById('chart-container');
+      const history = JSON.parse(localStorage.getItem('appTreinoHistorico_' + currentUser)) || [];
+
+      let chartHTML = ''; const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(); d.setDate(d.getDate() - i); const dateStr = d.toLocaleDateString('pt-BR');
+        const treinou = history.some(t => t.date === dateStr);
+        const altura = treinou ? '100%' : '5%'; const classeCor = treinou ? 'active' : '';
+        const classeHoje = (i === 0) ? 'font-weight: 800; color: var(--blue-primary);' : '';
+        const label = (i === 0) ? 'Hoje' : diasSemana[d.getDay()];
+        chartHTML += `<div class="bar-col"><div class="bar-track"><div class="bar-fill ${classeCor}" style="height:0%;" data-height="${altura}"></div></div><span class="bar-label" style="${classeHoje}">${label}</span></div>`;
+      }
+      chartContainer.innerHTML = chartHTML;
+      setTimeout(() => document.querySelectorAll('.bar-fill').forEach(bar => bar.style.height = bar.getAttribute('data-height')), 100);
+
+      if (history.length === 0) { container.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:20px;">Nenhum treino salvo.</p>`; } 
+      else {
+        container.innerHTML = history.map(item => {
+          let detailsHTML = '';
+          if(item.exercises && item.exercises.length > 0) { detailsHTML += item.exercises.map(ex => `<div class="detail-row"><span>${ex.name}</span><span class="detail-weight">${ex.weight} kg</span></div>`).join(''); } 
+          else { detailsHTML += `<p style="font-size:12px; color:var(--text-muted);">Nenhuma carga.</p>`; }
+          if(item.notes) detailsHTML += `<div class="history-notes">📝 "${item.notes}"</div>`;
+          const volumeText = item.volume > 0 ? `<div class="history-vol">Volume Total: ${item.volume} kg</div>` : '';
+
+          return `<div class="history-card" onclick="toggleDetails(${item.id})"><div class="history-header"><div class="history-info"><h4>${item.name}</h4><p>Às ${item.time}</p>${volumeText}</div><div class="history-date">${item.date}</div></div><div class="history-details" id="details-${item.id}">${detailsHTML}</div></div>`
+        }).join('');
+      }
+    }
+
+    function toggleDetails(id) { const el = document.getElementById(`details-${id}`); el.style.display = (el.style.display === 'block') ? 'none' : 'block'; }
+    function filterWorkouts(category, btnElement) { document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active')); btnElement.classList.add('active'); document.querySelectorAll('.workout-card').forEach(card => { if (category === 'all' || card.getAttribute('data-category') === category) card.classList.remove('hidden'); else card.classList.add('hidden'); }); }
+
+    function calculate1RM() {
+      const weight = parseFloat(document.getElementById('rm-weight').value); const reps = parseInt(document.getElementById('rm-reps').value); const resultDiv = document.getElementById('rm-result');
+      if(!weight || !reps || reps < 1) { resultDiv.innerHTML = "Preencha peso e repetições."; resultDiv.style.display = 'block'; return; }
+      const rm = Math.round(weight * (1 + (reps / 30))); resultDiv.innerHTML = `Sua 1RM Estimada é: <strong>${rm} kg</strong>`; resultDiv.style.display = 'block';
+    }
+
+    function exportData() {
+      const dataToExport = { user: currentUser, history: JSON.parse(localStorage.getItem('appTreinoHistorico_' + currentUser)) || [], weight: JSON.parse(localStorage.getItem('appTreinoPeso_' + currentUser)) || [] };
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataToExport));
+      const downloadAnchorNode = document.createElement('a'); downloadAnchorNode.setAttribute("href", dataStr); downloadAnchorNode.setAttribute("download", `treino_backup_${currentUser}.json`);
+      document.body.appendChild(downloadAnchorNode); downloadAnchorNode.click(); downloadAnchorNode.remove();
+    }
+
+    function importData(event) {
+      const file = event.target.files[0]; if(!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const importedData = JSON.parse(e.target.result); if(!importedData.history) throw new Error("Arquivo inválido");
+          if(confirm("Isso irá substituir seu histórico atual pelo do arquivo. Continuar?")) {
+            localStorage.setItem('appTreinoHistorico_' + currentUser, JSON.stringify(importedData.history));
+            if(importedData.weight) localStorage.setItem('appTreinoPeso_' + currentUser, JSON.stringify(importedData.weight));
+            alert("Dados restaurados com sucesso!"); renderDashboard();
+          }
+        } catch(error) { alert("Erro ao ler o arquivo de backup."); }
+        event.target.value = '';
+      };
+      reader.readAsText(file);
     }
   </script>
 </body>
