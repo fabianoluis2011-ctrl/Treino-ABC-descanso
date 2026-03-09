@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-app: #f4f7f9; /* Fundo cinza/azulado bem claro */
+      --bg-app: #f4f7f9;
       --card-bg: #ffffff;
       --text-main: #1e293b;
       --text-muted: #64748b;
@@ -32,7 +32,7 @@
     }
 
     body {
-      font-family: 'Poppins', sans-serif; /* Aplicando a nova fonte */
+      font-family: 'Poppins', sans-serif;
       background-color: var(--bg-app);
       color: var(--text-main);
       min-height: 100vh;
@@ -40,7 +40,6 @@
     }
 
     .app-container {
-      /* Largura fluida para aproveitar a tela toda no desktop */
       max-width: 1400px; 
       margin: 0 auto;
       padding: 24px;
@@ -82,7 +81,7 @@
     }
 
     .header h1 {
-      font-size: clamp(28px, 4vw, 42px); /* Tamanho responsivo */
+      font-size: clamp(28px, 4vw, 42px);
       font-weight: 800;
       line-height: 1.2;
       margin-bottom: 12px;
@@ -139,7 +138,7 @@
       gap: 12px;
       overflow-x: auto;
       scrollbar-width: none;
-      padding-bottom: 8px; /* Espaço para a sombra do hover */
+      padding-bottom: 8px;
     }
     
     .filters::-webkit-scrollbar { display: none; }
@@ -175,10 +174,9 @@
       color: white;
     }
 
-    /* Grid de Treinos Responsivo (Tela Cheia) */
+    /* Grid de Treinos Responsivo */
     .workouts-grid {
       display: grid;
-      /* Faz os cards se adaptarem. No celular 1 coluna, no PC várias colunas */
       grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
       gap: 24px;
     }
@@ -251,36 +249,63 @@
       gap: 10px;
     }
 
+    /* Item de Exercício e Sistema de Checkbox */
     .exercise-item {
       display: grid;
-      grid-template-columns: 1fr auto auto;
+      /* Alterado para dar espaço ao botão de check */
+      grid-template-columns: auto 1fr auto auto;
       gap: 12px;
       align-items: center;
-      padding: 14px 16px;
+      padding: 12px 14px;
       background: var(--bg-app);
       border-radius: var(--radius-md);
       font-size: 14px;
-      transition: background 0.2s;
+      transition: all 0.3s ease;
+      cursor: pointer; /* Permite clicar na linha toda */
     }
 
     .exercise-item:hover {
       background: var(--blue-light);
     }
 
+    /* Botão de Check Circle */
+    .check-circle {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 2px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      background: white;
+    }
+
+    .check-circle svg {
+      width: 14px;
+      height: 14px;
+      color: white;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
     .ex-name {
       font-weight: 600;
       color: var(--text-main);
+      transition: all 0.3s ease;
     }
 
     .ex-sets {
       background: var(--card-bg);
       border: 1px solid var(--border-line);
-      padding: 4px 12px;
+      padding: 4px 10px;
       border-radius: 8px;
       font-size: 12px;
       font-weight: 700;
       color: var(--text-muted);
       text-align: center;
+      transition: all 0.3s ease;
     }
 
     .ex-reps {
@@ -288,9 +313,31 @@
       color: var(--blue-primary);
       text-align: right;
       min-width: 55px;
+      transition: all 0.3s ease;
     }
 
-    /* Botão Flutuante Piscante (FAB) Modernizado */
+    /* Estado de Exercício Concluído */
+    .exercise-item.completed {
+      background: transparent;
+      opacity: 0.6;
+    }
+
+    .exercise-item.completed .check-circle {
+      background: var(--blue-primary);
+      border-color: var(--blue-primary);
+    }
+
+    .exercise-item.completed .check-circle svg {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .exercise-item.completed .ex-name {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    /* Botão Flutuante Piscante (FAB) */
     .fab-button {
       position: fixed;
       bottom: 30px;
@@ -320,15 +367,9 @@
     }
 
     @keyframes pulse {
-      0% {
-        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.6);
-      }
-      70% {
-        box-shadow: 0 0 0 25px rgba(37, 99, 235, 0);
-      }
-      100% {
-        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
-      }
+      0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.6); }
+      70% { box-shadow: 0 0 0 25px rgba(37, 99, 235, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
     }
 
     .play-icon {
@@ -340,21 +381,10 @@
       margin-left: 6px; 
     }
 
-    /* Ajustes para telas menores */
     @media (max-width: 768px) {
-      .app-container {
-        padding: 16px;
-      }
-      .header {
-        padding: 30px 20px;
-        border-radius: 20px;
-      }
-      .fab-button {
-        bottom: 20px;
-        right: 20px;
-        width: 60px;
-        height: 60px;
-      }
+      .app-container { padding: 16px; }
+      .header { padding: 30px 20px; border-radius: 20px; }
+      .fab-button { bottom: 20px; right: 20px; width: 60px; height: 60px; }
     }
   </style>
 </head>
@@ -390,6 +420,14 @@
 
     <main class="workouts-grid" id="workout-container">
       
+      <template id="check-template">
+        <div class="check-circle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+      </template>
+
       <article class="workout-card" data-category="A">
         <div class="workout-header">
           <div class="workout-title">
@@ -522,18 +560,35 @@
 
   </div>
 
-  <button class="fab-button" onclick="alert('Bora treinar!')" aria-label="Iniciar Treino">
-    <div class="play-icon"></div>
+  <button class="fab-button" onclick="resetAllChecks()" aria-label="Zerar Treino">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; color: white;">
+      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+      <path d="M3 3v5h5"></path>
+    </svg>
   </button>
 
   <script>
+    // Injeta o círculo de check em todos os itens de exercício
+    const template = document.getElementById('check-template').content;
+    const exerciseItems = document.querySelectorAll('.exercise-item');
+    
+    exerciseItems.forEach(item => {
+      // Clona o HTML do círculo e insere no início do item
+      const checkNode = document.importNode(template, true);
+      item.insertBefore(checkNode, item.firstChild);
+      
+      // Adiciona o evento de clique para marcar/desmarcar
+      item.addEventListener('click', function() {
+        this.classList.toggle('completed');
+      });
+    });
+
+    // Função de filtro dos cards
     function filterWorkouts(category, btnElement) {
-      // Atualiza o estilo visual dos botões
       const buttons = document.querySelectorAll('.filter-btn');
       buttons.forEach(btn => btn.classList.remove('active'));
       btnElement.classList.add('active');
 
-      // Aplica o filtro nos cards
       const cards = document.querySelectorAll('.workout-card');
       cards.forEach(card => {
         if (category === 'all' || card.getAttribute('data-category') === category) {
@@ -543,13 +598,20 @@
         }
       });
       
-      // Ajuste suave de scroll caso a pessoa esteja muito para baixo na página
       const filterBar = document.querySelector('.filter-scroll');
       if (window.scrollY > filterBar.offsetTop) {
         window.scrollTo({
           top: filterBar.offsetTop - 10,
           behavior: 'smooth'
         });
+      }
+    }
+
+    // Função para o botão flutuante (Zerar todas as marcações)
+    function resetAllChecks() {
+      if(confirm("Deseja desmarcar todos os exercícios?")) {
+        const items = document.querySelectorAll('.exercise-item.completed');
+        items.forEach(item => item.classList.remove('completed'));
       }
     }
   </script>
